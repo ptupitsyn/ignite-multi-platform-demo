@@ -35,7 +35,7 @@ class Program
             Console.Write("> ");
 
             var msgText = Console.ReadLine();
-            long msgId = messageId.Increment();
+            var msgId = messageId.Increment();
 
             cache[msgId] = new Message(name, msgText);
         }
