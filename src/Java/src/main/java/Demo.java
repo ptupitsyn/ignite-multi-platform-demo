@@ -15,6 +15,12 @@ import java.util.Scanner;
 
 public class Demo {
     public static void main(String[] args) {
+        // Retrieve user name
+        System.out.print("Hi, enter your name: ");
+        Scanner consoleScanner = new Scanner(System.in);
+        String name = consoleScanner.nextLine();
+
+        // Configure Ignite to connect with .NET nodes
         BinaryConfiguration binCfg = new BinaryConfiguration();
 
         binCfg.setIdMapper(new BinaryBasicIdMapper());
@@ -22,14 +28,8 @@ public class Demo {
 
         IgniteConfiguration cfg = new IgniteConfiguration().setBinaryConfiguration(binCfg);
 
+        // Start Ignite and retrieve cache
         Ignite ignite = Ignition.start(cfg);
-
-        // Retrieve user name
-        System.out.print("Hi, enter your name: ");
-        Scanner consoleScanner = new Scanner(System.in);
-        String name = consoleScanner.nextLine();
-
-        // Initialize cache
         IgniteCache<Long, Message> cache = ignite.getOrCreateCache("chat");
 
         // Initialize unique ID sequence
@@ -52,20 +52,11 @@ public class Demo {
         // Run the chat loop
         while (true) {
             System.out.print("> ");
-            String msgText = consoleScanner.nextLine();
 
+            String msgText = consoleScanner.nextLine();
             Long msgId = messageId.incrementAndGet();
+
             cache.put(msgId, new Message(name, msgText));
         }
-    }
-
-    private static class Message {
-        public Message(String author, String text) {
-            this.author = author;
-            this.text = text;
-        }
-
-        final String author;
-        final String text;
     }
 }
