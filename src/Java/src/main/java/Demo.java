@@ -9,8 +9,6 @@ import org.apache.ignite.configuration.BinaryConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 
 import javax.cache.event.CacheEntryEvent;
-import javax.cache.event.CacheEntryListenerException;
-import javax.cache.event.CacheEntryUpdatedListener;
 import java.util.Scanner;
 
 public class Demo {
@@ -36,15 +34,12 @@ public class Demo {
         IgniteAtomicSequence messageId = ignite.atomicSequence("chatId", 0, true);
 
         // Set up continuous query
-        ContinuousQuery<Long, Message> qry = new ContinuousQuery<Long, Message>();
+        ContinuousQuery<Long, Message> qry = new ContinuousQuery<>();
 
-        qry.setLocalListener(new CacheEntryUpdatedListener<Long, Message>() {
-            public void onUpdated(
-                Iterable<CacheEntryEvent<? extends Long, ? extends Message>> iterable) throws CacheEntryListenerException {
-                // This will be invoked immediately on each cache update
-                for (CacheEntryEvent<? extends Long, ? extends Message> evt : iterable)
-                    System.out.println(evt.getValue().author + ": " + evt.getValue().text);
-            }
+        qry.setLocalListener(iterable -> {
+            // This will be invoked immediately on each cache update
+            for (CacheEntryEvent<? extends Long, ? extends Message> evt : iterable)
+                System.out.println(evt.getValue().author + ": " + evt.getValue().text);
         });
 
         cache.query(qry);
