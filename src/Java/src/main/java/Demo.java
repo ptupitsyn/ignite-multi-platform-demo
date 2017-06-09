@@ -20,17 +20,14 @@ public class Demo {
         String name = consoleScanner.nextLine();
 
         // Configure Ignite to connect with .NET nodes
-        BinaryConfiguration binCfg = new BinaryConfiguration();
-
-        binCfg.setNameMapper(new BinaryBasicNameMapper(true));
-
-        IgniteConfiguration cfg = new IgniteConfiguration().setBinaryConfiguration(binCfg);
+        IgniteConfiguration cfg = new IgniteConfiguration().setBinaryConfiguration(
+                new BinaryConfiguration().setNameMapper(new BinaryBasicNameMapper(true)));
 
         // Start Ignite and retrieve cache
         Ignite ignite = Ignition.start(cfg);
         IgniteCache<Long, Message> cache = ignite.getOrCreateCache("chat");
 
-        // Register message binary type.
+        // Register message binary type
         ignite.binary().type(Message.class);
 
         // Initialize unique ID sequence

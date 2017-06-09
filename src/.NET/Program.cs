@@ -26,7 +26,7 @@ class Program
         var ignite = Ignition.Start(cfg);
         var cache = ignite.GetOrCreateCache<long, Message>("chat");
 
-        // Register Message binary type.
+        // Register Message binary type
         ignite.GetBinary().GetBinaryType(typeof(Message));
 
         // Initialize unique ID sequence
