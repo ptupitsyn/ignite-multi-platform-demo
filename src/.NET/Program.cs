@@ -16,12 +16,18 @@ class Program
         // Register Message type
         var cfg = new IgniteConfiguration
         {
-            BinaryConfiguration = new BinaryConfiguration(typeof(Message))
+            BinaryConfiguration = new BinaryConfiguration
+            {
+                NameMapper = new BinaryBasicNameMapper {IsSimpleName = true}
+            }
         };
 
         // Start Ignite and retrieve cache
         var ignite = Ignition.Start(cfg);
         var cache = ignite.GetOrCreateCache<long, Message>("chat");
+
+        // Register Message binary type.
+        ignite.GetBinary().GetBinaryType(typeof(Message));
 
         // Initialize unique ID sequence
         var messageId = ignite.GetAtomicSequence("chatId", 0, true);

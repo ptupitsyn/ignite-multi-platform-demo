@@ -9,6 +9,7 @@ import org.apache.ignite.configuration.BinaryConfiguration;
 import org.apache.ignite.configuration.IgniteConfiguration;
 
 import javax.cache.event.CacheEntryEvent;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Demo {
@@ -21,14 +22,16 @@ public class Demo {
         // Configure Ignite to connect with .NET nodes
         BinaryConfiguration binCfg = new BinaryConfiguration();
 
-        binCfg.setIdMapper(new BinaryBasicIdMapper());
-        binCfg.setNameMapper(new BinaryBasicNameMapper());
+        binCfg.setNameMapper(new BinaryBasicNameMapper(true));
 
         IgniteConfiguration cfg = new IgniteConfiguration().setBinaryConfiguration(binCfg);
 
         // Start Ignite and retrieve cache
         Ignite ignite = Ignition.start(cfg);
         IgniteCache<Long, Message> cache = ignite.getOrCreateCache("chat");
+
+        // Register message binary type.
+        ignite.binary().type(Message.class);
 
         // Initialize unique ID sequence
         IgniteAtomicSequence messageId = ignite.atomicSequence("chatId", 0, true);
